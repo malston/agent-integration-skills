@@ -28,12 +28,12 @@ reverse). Name the forces it does not weight. Every verdict in section 4 must re
 
 ## 4. Findings, one per pattern
 
-Order: misapplied; absent, needed; present, adjust; present, fitting; absent, not needed. Not
-applicable patterns and rejected scanner candidates get one line each in section 7, no more.
+Order: misapplied; absent, needed; present, adjust; present, fitting. Absent-not-needed companions,
+rejected scanner candidates, and not-applicable patterns get one line each in section 7, no more.
 
 ### <Pattern name> (<category>, <maturity>, from references/matrix.md)
 
-- Status: misapplied | absent, needed | present, adjust | present, fitting | absent, not needed
+- Status: misapplied | absent, needed | present, adjust | present, fitting
 - Evidence: `[SCAN n/m/k]`; confirmed at `[CODE file:line]` ... or "no code hit; doc hit at `[DOC file:line]` is intent only"
 - What the catalogue says it solves: `[CATALOGUE <pattern> §Problem]` one sentence.
 - Fit to intent: does the stated intent call for this pattern? `[JUDGMENT]` with the force it serves.
@@ -61,9 +61,9 @@ The transports in use `[CODE]`, what the catalogue recommends for the patterns p
 warning that applies (fan-out on HTTP/1.1, QUIC replay without idempotency, stdio for remote).
 If nothing applies, one sentence saying so.
 
-## 7. Not applicable and rejected candidates
+## 7. Not applicable, rejected candidates, and companions not needed
 
-| Pattern | Scanner hits | Why not here (one clause) |
+| Pattern | Scanner hits | Why not here, or leave until (one clause) |
 
 ## Sources
 

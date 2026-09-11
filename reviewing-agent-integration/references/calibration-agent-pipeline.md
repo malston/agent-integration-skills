@@ -81,3 +81,13 @@ claim. Checkpoint and Resume may be "present, adjust" or "misapplied"; both are 
 narrow the claim. Both as expected. Every other verdict inside the mapping. Six wording
 inconsistencies reported and fixed in SKILL.md the same day; those fixes have not yet been run
 against this fixture. Next edit to the skill or scanner: run the review and diff before trusting it.
+
+## Fifth run (2026-09-11, after the scale fixes)
+
+4,497 words for 1,494 source lines (budget 3,000 to 4,500). Companions moved to section 7 as
+intended. Tool Provider: misapplied, narrow the claim (inside the mapping). Checkpoint: misapplied.
+New: Ensemble Judge "absent, needed" through the failure-map test (FM-3.3 open, Ensemble Judge its
+only ✅ mitigator). Acceptable; the rule was then tightened to ✅ mitigators of exhibitable modes, one
+pattern per open mode, which still yields this verdict. Four wording contradictions fixed the same
+day (findings order, misapplied versus absent when a mechanism is half built, the failure-map test,
+word counting); not yet rerun against this fixture.

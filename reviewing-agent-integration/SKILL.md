@@ -68,8 +68,8 @@ with a one-paragraph "not an integration problem" note.
 
 | Status             | Meaning                                                                    | Length   |
 | ------------------ | -------------------------------------------------------------------------- | -------- |
-| misapplied | The code uses the pattern's name or mechanism and departs from the Solution section | full |
-| absent, needed | Not in code, and one of: a design document claims it; the failure map leaves a mode open for this topology that it covers; section 3 weights a force only it resolves | full |
+| misapplied | The code carries the pattern's name or any part of its mechanism, and departs from the Solution section (a mechanism half built is misapplied, not absent) | full |
+| absent, needed | Not in code, and one of: a design document claims it; the failure map leaves open a mode this topology can exhibit and this pattern is a full (✅) mitigator of it; section 3 weights a force only it resolves. One open mode makes at most one absent pattern needed: the ✅ mitigator with the highest maturity | full |
 | present, adjust    | In code and fitting, with a named departure worth fixing                   | full     |
 | present, fitting   | In code, matches Solution, no departure                                    | short    |
 | absent, not needed | A companion not present that meets none of the three "needed" tests | one line, section 7 |
@@ -78,12 +78,14 @@ with a one-paragraph "not an integration problem" note.
 Full is about 250 words. Short is under 120: status, evidence, one sentence of fit, the
 when-to-avoid clause or "no when-to-avoid clause in the catalogue", recommendation "leave". For "absent, not needed", the recommendation is "leave until <condition>", taking the condition
 from the when-to-avoid clause when the file has one and from section 3 otherwise. When a design
-document claims a pattern the code lacks, the status is "absent, needed" if the code never uses the
-pattern's name or mechanism and "misapplied" if it does; the recommendation is "build" or "remove
+document claims a pattern, the status is "absent, needed" if the code has none of the pattern's
+mechanism and "misapplied" if it has any part of it; the recommendation is "build" or "remove
 the claim" or "narrow the claim". The design-versus-code disagreement is the finding.
 
-Findings order: misapplied; absent, needed; present, adjust; present, fitting; absent, not needed.
-Then section 7 for not applicable and rejected scanner candidates.
+Findings order: misapplied; absent, needed; present, adjust; present, fitting. Section 7 then
+holds, one line each: absent-not-needed companions with their "leave until" condition, rejected
+scanner candidates with the reason, and not-applicable patterns (these last may share a line when
+the reason is the same).
 
 ## Report contract
 
@@ -93,8 +95,8 @@ pattern §section]`, `[JUDGMENT]`. The finding heading carries the catalogue's c
 from `references/matrix.md`; this catalogue has no topology axis.
 
 Budget: 3,000 to 4,500 words for a codebase under 5,000 source lines; add 500 words for each
-further 10,000 lines, to a ceiling of 6,500. The scanner's header reports the line count. If the
-count exceeds the budget, the fix is shortening "present, fitting" findings and moving "absent, not
+further 10,000 lines, to a ceiling of 6,500. The scanner's header reports the line count. Count words with `wc -w` on the whole file, tags and
+paths included. If the count exceeds the budget, the fix is shortening "present, fitting" findings and moving "absent, not
 needed" companions to section 7, never dropping citations.
 
 ## Quick reference

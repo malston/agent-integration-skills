@@ -27,7 +27,8 @@ with a one-paragraph "not an integration problem" note.
 
 1. **Scan.** `python3 scripts/scan_patterns.py <repo> --json <out>.json`. Read the topology block
    first. Hits are split into code, doc, and config. A pattern with doc hits and no code hits is
-   stated intent. Docstring prose counts as code; check it with `--show <id>` before confirming.
+   stated intent. Docstring prose counts as code; check it with `--show <id>` before confirming. `--show` prints
+   one line per hit as `[kind] path:line: text`, where kind is code, doc, or config.
 
 2. **Intent.** Read README and the design documents the scanner's doc hits point at. Write report
    section 1: what the codebase says it is, which rung of the complexity ladder it claims (direct
@@ -43,7 +44,9 @@ with a one-paragraph "not an integration problem" note.
 
 5. **Select patterns.** A pattern gets a finding if any of these hold: it has a confirmed code hit;
    it has a doc hit that states intent; or it appears in the Related Patterns or Participants of a
-   pattern with status misapplied, present-adjust, or present-fitting, whatever the relation verb (`uses`, `complements`, `used-by`, or none).
+   pattern with status misapplied, present-adjust, or present-fitting, whatever the relation verb (`uses`, `complements`, `used-by`, or none),
+   and it passes at least one of the three "needed" tests in the status table. A companion that
+   passes none is "absent, not needed" and goes to section 7 as one line, not a finding.
    Every other pattern, and every scanner candidate you reject, gets one line in section 7.
 
 6. **Write findings.** Read `references/patterns/<id>.md` for each selected pattern. Assign one
@@ -69,11 +72,11 @@ with a one-paragraph "not an integration problem" note.
 | absent, needed | Not in code, and one of: a design document claims it; the failure map leaves a mode open for this topology that it covers; section 3 weights a force only it resolves | full |
 | present, adjust    | In code and fitting, with a named departure worth fixing                   | full     |
 | present, fitting   | In code, matches Solution, no departure                                    | short    |
-| absent, not needed | A companion not present that meets none of the three "needed" tests | short |
+| absent, not needed | A companion not present that meets none of the three "needed" tests | one line, section 7 |
 | not applicable     | Nothing in code or docs calls for it                                       | one line |
 
-Full is about 250 words. Short is under 120: status, evidence, one sentence of fit, recommendation
-"leave". For "absent, not needed", the recommendation is "leave until <condition>", taking the condition
+Full is about 250 words. Short is under 120: status, evidence, one sentence of fit, the
+when-to-avoid clause or "no when-to-avoid clause in the catalogue", recommendation "leave". For "absent, not needed", the recommendation is "leave until <condition>", taking the condition
 from the when-to-avoid clause when the file has one and from section 3 otherwise. When a design
 document claims a pattern the code lacks, the status is "absent, needed" if the code never uses the
 pattern's name or mechanism and "misapplied" if it does; the recommendation is "build" or "remove
@@ -89,8 +92,10 @@ The template in `references/report-template.md` is the deliverable's shape. Evid
 pattern §section]`, `[JUDGMENT]`. The finding heading carries the catalogue's category and maturity
 from `references/matrix.md`; this catalogue has no topology axis.
 
-Budget: 3,000 to 4,500 words for a codebase of a few thousand lines. If the count exceeds it, the
-fix is shortening "present, fitting" and "absent, not needed" findings, never dropping citations.
+Budget: 3,000 to 4,500 words for a codebase under 5,000 source lines; add 500 words for each
+further 10,000 lines, to a ceiling of 6,500. The scanner's header reports the line count. If the
+count exceeds the budget, the fix is shortening "present, fitting" findings and moving "absent, not
+needed" companions to section 7, never dropping citations.
 
 ## Quick reference
 

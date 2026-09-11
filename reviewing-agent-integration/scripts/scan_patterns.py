@@ -154,6 +154,25 @@ DEFAULT_GLOBS = ["!**/node_modules/**", "!**/.venv/**", "!**/target/**", "!**/di
 TEST_GLOBS = ["!**/test*/**", "!**/tests/**", "!**/*_test.*", "!**/test_*.*"]
 
 
+def _source_lines(root: Path, globs: list[str]) -> int:
+    """Count lines in source files the scan would search, for the review's word budget."""
+    cmd = ["rg", "--files", str(root)]
+    for g in globs:
+        cmd += ["-g", g]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
+    total = 0
+    for f in proc.stdout.splitlines():
+        suf = Path(f).suffix.lower()
+        if suf in DOC_SUFFIXES or suf in CONFIG_SUFFIXES or not suf:
+            continue
+        try:
+            with open(f, "rb") as fh:
+                total += sum(1 for _ in fh)
+        except OSError:
+            continue
+    return total
+
+
 def rg(pattern: str, root: Path, globs: list[str]) -> list[dict]:
     cmd = ["rg", "--json", "-i", "-e", pattern, str(root)]
     for g in globs:
@@ -232,7 +251,9 @@ def main() -> int:
             print(f"  [{h['kind']}] {h['file']}:{h['line']}: {h['text']}")
         return 0
 
+    loc = _source_lines(root, globs)
     print(f"repo: {root}")
+    print(f"source lines (non-doc, non-config, tests excluded unless --include-tests): {loc}")
     print("\ntopology signals (files with at least one hit):")
     for key, hits in result["topology"].items():
         files = sorted({h["file"] for h in hits})

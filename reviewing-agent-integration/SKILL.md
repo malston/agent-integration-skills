@@ -28,7 +28,8 @@ with a one-paragraph "not an integration problem" note.
 1. **Scan.** `python3 scripts/scan_patterns.py <repo> --json <out>.json`. Read the topology block
    first. Hits are split into code, doc, and config. A pattern with doc hits and no code hits is
    stated intent. Docstring prose counts as code; check it with `--show <id>` before confirming. `--show` prints
-   one line per hit as `[kind] path:line: text`, where kind is code, doc, or config.
+   one line per hit, indented two spaces, as `[kind] path:line: text`, where kind is code, doc, or
+   config; filter with a pattern that does not anchor at line start.
 
 2. **Intent.** Read README and the design documents the scanner's doc hits point at. Write report
    section 1: what the codebase says it is, which rung of the complexity ladder it claims (direct
@@ -69,7 +70,7 @@ with a one-paragraph "not an integration problem" note.
 | Status             | Meaning                                                                    | Length   |
 | ------------------ | -------------------------------------------------------------------------- | -------- |
 | misapplied | The code carries the pattern's name or any part of its mechanism, and departs from the Solution section (a mechanism half built is misapplied, not absent) | full |
-| absent, needed | Not in code, and one of: a design document claims it; the failure map leaves open a mode this topology can exhibit and this pattern is a full (✅) mitigator of it; section 3 weights a force only it resolves. One open mode makes at most one absent pattern needed: the ✅ mitigator with the highest maturity | full |
+| absent, needed | Not in code, and one of: a design document claims it; the failure map leaves open a mode this topology can exhibit, this pattern is a full (✅) mitigator of it, and the pattern file's Context section describes this codebase; section 3 weights a force only it resolves. One open mode makes at most one absent pattern needed: the ✅ mitigator whose Context fits, then highest maturity, then the one already named by a present pattern's Related Patterns | full |
 | present, adjust    | In code and fitting, with a named departure worth fixing                   | full     |
 | present, fitting   | In code, matches Solution, no departure                                    | short    |
 | absent, not needed | A companion not present that meets none of the three "needed" tests | one line, section 7 |
@@ -95,7 +96,8 @@ pattern §section]`, `[JUDGMENT]`. The finding heading carries the catalogue's c
 from `references/matrix.md`; this catalogue has no topology axis.
 
 Budget: 3,000 to 4,500 words for a codebase under 5,000 source lines; add 500 words for each
-further 10,000 lines, to a ceiling of 6,500. The scanner's header reports the line count. Count words with `wc -w` on the whole file, tags and
+further 10,000 lines, to a ceiling of 6,500. The scanner's header reports the line count for code
+files only (notebooks, vendored and static assets, docs, and config excluded); use that number. Count words with `wc -w` on the whole file, tags and
 paths included. If the count exceeds the budget, the fix is shortening "present, fitting" findings and moving "absent, not
 needed" companions to section 7, never dropping citations.
 

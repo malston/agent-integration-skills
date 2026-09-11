@@ -33,7 +33,7 @@ from pathlib import Path
 SIGNATURES: dict[str, tuple[str, list[str], str]] = {
     # messaging
     "direct-message": ("messaging", [
-        r"tasks/send|send_task\(|delegate\(|send_message\(|\.send\(\s*\w*agent",
+        r"tasks/send|send_task\(|delegate\(|send_message\(|\.send\(\s*\w*agent|dispatch\.\w+|/dispatch/|runtime_url|agent_url",
     ], "point-to-point call between agents or to a worker"),
     "broadcast-message": ("messaging", [
         r"publish\(|\.subscribe\(|pubsub|topic\s*=|EventBus|event_bus",
@@ -53,7 +53,7 @@ SIGNATURES: dict[str, tuple[str, list[str], str]] = {
     ], "message broker in the path between agents"),
     # context
     "context-injection": ("context", [
-        r"assemble_context|build_context|context_window|system_prompt\s*=|_SYSTEM\s*=|SYSTEM_PROMPT|SystemMessage\(|inject(ed)?_context",
+        r"assemble_context|build_context|context_window|system_prompt\s*=|_SYSTEM\s*=|SYSTEM_PROMPT|SystemMessage\(|inject(ed)?_context|shortlist|render_prompt|prompt_context|build_prompt",
     ], "harness assembles context before the model call"),
     "tool-provider": ("context", [
         r"list_tools|tools/list|tools/call|call_tool\(|@\w*\.tool\b|mcp\.server|from mcp|McpServer|ToolRegistry|register_tool|TOOL_CATALOG|tool_catalog|\bTool\(",
@@ -98,8 +98,8 @@ SIGNATURES: dict[str, tuple[str, list[str], str]] = {
         r"checkpointer|Checkpointer|InMemorySaver|SqliteSaver|PostgresSaver|save_checkpoint|resume_from|thread_id",
     ], "state persisted between steps for resume"),
     "circuit-breaker": ("resilience", [
-        r"CircuitBreaker|circuit_breaker|HALF_OPEN|half_open|failure_threshold",
-    ], "stateful breaker around a failing dependency"),
+        r"CircuitBreaker|circuit_breaker|HALF_OPEN|half_open|failure_threshold|probe_(job|call|request)|revive|cooldown",
+    ], "stateful breaker around a failing dependency; a probe without an open state is a partial hit"),
     "dead-letter-agent": ("resilience", [
         r"dead_letter|DeadLetter|dlq|unprocessable|escalate_to_human|human_review_queue",
     ], "failed tasks routed to a handler, never dropped"),
@@ -149,8 +149,12 @@ TOPOLOGY: dict[str, list[str]] = {
 
 DOC_SUFFIXES = {".md", ".rst", ".txt", ".adoc", ".html", ".svg", ".ipynb"}
 CONFIG_SUFFIXES = {".toml", ".yaml", ".yml", ".json", ".ini", ".cfg", ".env"}
+CODE_SUFFIXES = {".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".java", ".kt", ".cs", ".rb",
+                 ".php", ".scala", ".swift", ".c", ".cc", ".cpp", ".h", ".hpp", ".sh", ".bash", ".zsh",
+                 ".sql", ".proto", ".graphql", ".lua", ".ex", ".exs", ".erl", ".clj", ".hs", ".ml"}
 DEFAULT_GLOBS = ["!**/node_modules/**", "!**/.venv/**", "!**/target/**", "!**/dist/**",
-                 "!**/.git/**", "!**/*.lock", "!**/*_pb2*.py", "!**/output/**", "!**/build/**"]
+                 "!**/.git/**", "!**/*.lock", "!**/*_pb2*.py", "!**/output/**", "!**/build/**",
+                 "!**/vendor/**", "!**/static/**", "!**/*.min.js", "!**/*.ipynb"]
 TEST_GLOBS = ["!**/test*/**", "!**/tests/**", "!**/*_test.*", "!**/test_*.*"]
 
 
@@ -163,7 +167,7 @@ def _source_lines(root: Path, globs: list[str]) -> int:
     total = 0
     for f in proc.stdout.splitlines():
         suf = Path(f).suffix.lower()
-        if suf in DOC_SUFFIXES or suf in CONFIG_SUFFIXES or not suf:
+        if suf not in CODE_SUFFIXES:
             continue
         try:
             with open(f, "rb") as fh:
@@ -253,7 +257,7 @@ def main() -> int:
 
     loc = _source_lines(root, globs)
     print(f"repo: {root}")
-    print(f"source lines (non-doc, non-config, tests excluded unless --include-tests): {loc}")
+    print(f"source lines (code suffixes only; tests excluded unless --include-tests): {loc}")
     print("\ntopology signals (files with at least one hit):")
     for key, hits in result["topology"].items():
         files = sorted({h["file"] for h in hits})

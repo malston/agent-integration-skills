@@ -91,3 +91,13 @@ only ✅ mitigator). Acceptable; the rule was then tightened to ✅ mitigators o
 pattern per open mode, which still yields this verdict. Four wording contradictions fixed the same
 day (findings order, misapplied versus absent when a mechanism is half built, the failure-map test,
 word counting); not yet rerun against this fixture.
+
+## Other codebases reviewed
+
+- 2026-09-11 `designing_ai_systems_repo` at `94dd7ec` (about 25,000 source lines): 4,232 words;
+  exposed the budget, companion, `--show`, and short-format issues fixed in `48e44cb`.
+- 2026-09-11 a private customer codebase (about 33,000 code lines; the scanner counted 277,469
+  before binary files were excluded from the line count): 5,530 words. Exposed: line count inflated
+  by non-code files; the "needed" test lacked a Context check and a tie-break; `--show` lines are
+  indented; no signatures for a half-open probe, a dispatch POST, or a pre-assembled prompt context.
+  All fixed the same day; not rerun.
